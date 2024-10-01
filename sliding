@@ -1,0 +1,242 @@
+import { useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Toast } from "@/components/ui/toast"
+import { CalendarIcon, Menu, X, Phone, Mail, MessageCircle, Upload } from "lucide-react"
+
+export default function Component() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
+  const [selectedService, setSelectedService] = useState("")
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+
+  const services = [
+    { name: "Window Cleaning", image: "/placeholder.svg?height=200&width=200" },
+    { name: "New Door Installation", image: "/placeholder.svg?height=200&width=200" },
+    { name: "New Window Installation", image: "/placeholder.svg?height=200&width=200" },
+    { name: "Partition Installation", image: "/placeholder.svg?height=200&width=200" },
+  ]
+
+  const founders = [
+    {
+      name: "John Doe",
+      role: "Founder",
+      image: "/placeholder.svg?height=200&width=200",
+      bio: "John Doe founded SlideClean in 2002 with a vision to revolutionize window cleaning services."
+    },
+    {
+      name: "Jane Smith",
+      role: "Co-Founder",
+      image: "/placeholder.svg?height=200&width=200",
+      bio: "Jane Smith joined as co-founder in 2002, bringing her expertise in business management."
+    }
+  ]
+
+  const clients = ["Tata", "Monginis", "Reliance", "Infosys"]
+
+  const handleServiceChange = (value: string) => {
+    setSelectedService(value)
+  }
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setUploadedImage(file)
+    }
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    
+    // Simulating database storage
+    console.log("Storing data in database:", Object.fromEntries(formData))
+
+    // Simulating sending email to admin
+    console.log("Sending email to admin: New order received")
+    console.log("Order details:", Object.fromEntries(formData))
+
+    // Show confirmation to user
+    setShowConfirmation(true)
+
+    // Reset form
+    event.currentTarget.reset()
+    setUploadedImage(null)
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-primary text-primary-foreground py-4">
+        <div className="container mx-auto flex justify-between items-center px-4">
+          <h1 className="text-2xl font-bold">SlideClean</h1>
+          <nav className="hidden md:flex space-x-4">
+            <Button variant="ghost" className="hover:bg-primary-foreground hover:text-primary" onClick={() => setActiveSection('home')}>Home</Button>
+            <Button variant="ghost" className="hover:bg-primary-foreground hover:text-primary" onClick={() => setActiveSection('services')}>Services</Button>
+            <Button variant="ghost" className="hover:bg-primary-foreground hover:text-primary" onClick={() => setActiveSection('about')}>About</Button>
+            <Button variant="ghost" className="hover:bg-primary-foreground hover:text-primary" onClick={() => setActiveSection('contact')}>Contact</Button>
+          </nav>
+          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </Button>
+        </div>
+      </header>
+
+      {isMenuOpen && (
+        <div className="md:hidden bg-primary text-primary-foreground py-2">
+          <nav className="container mx-auto flex flex-col space-y-2 px-4">
+            <Button variant="ghost" className="w-full text-left hover:bg-primary-foreground hover:text-primary" onClick={() => { setActiveSection('home'); setIsMenuOpen(false); }}>Home</Button>
+            <Button variant="ghost" className="w-full text-left hover:bg-primary-foreground hover:text-primary" onClick={() => { setActiveSection('services'); setIsMenuOpen(false); }}>Services</Button>
+            <Button variant="ghost" className="w-full text-left hover:bg-primary-foreground hover:text-primary" onClick={() => { setActiveSection('about'); setIsMenuOpen(false); }}>About</Button>
+            <Button variant="ghost" className="w-full text-left hover:bg-primary-foreground hover:text-primary" onClick={() => { setActiveSection('contact'); setIsMenuOpen(false); }}>Contact</Button>
+          </nav>
+        </div>
+      )}
+
+      <main className="flex-grow container mx-auto py-8 px-4">
+        {activeSection === 'home' && (
+          <section>
+            <h2 className="text-3xl font-bold mb-6">Welcome to SlideClean</h2>
+            <p className="text-xl mb-8">Professional window and door services since 2002.</p>
+            <h3 className="text-2xl font-semibold mb-4">Our Services</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {services.map((service, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle>{service.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <img src={service.image} alt={service.name} className="w-full h-auto rounded-lg" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {activeSection === 'services' && (
+          <section>
+            <h2 className="text-3xl font-bold mb-6">Our Services</h2>
+            <RadioGroup value={selectedService} onValueChange={handleServiceChange}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {services.map((service, index) => (
+                  <div key={index} className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted transition-colors">
+                    <RadioGroupItem value={service.name.toLowerCase().replace(' ', '_')} id={service.name.toLowerCase().replace(' ', '_')} />
+                    <Label htmlFor={service.name.toLowerCase().replace(' ', '_')} className="flex-grow cursor-pointer">{service.name}</Label>
+                  </div>
+                ))}
+              </div>
+            </RadioGroup>
+            {selectedService && (
+              <div className="mt-8">
+                <h3 className="text-2xl font-semibold mb-4">Service Details</h3>
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                  <div>
+                    <Label htmlFor="name">Name</Label>
+                    <Input id="name" name="name" placeholder="Your Name" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" name="email" type="email" placeholder="your@email.com" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="date">Preferred Date</Label>
+                    <Input id="date" name="date" type="date" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="image">Upload Image (optional)</Label>
+                    <div className="flex items-center space-x-2">
+                      <Input id="image" name="image" type="file" accept="image/*" onChange={handleImageUpload} className="flex-grow" />
+                      <Button type="button" size="icon" onClick={() => document.getElementById('image')?.click()}>
+                        <Upload className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {uploadedImage && (
+                      <p className="mt-2 text-sm text-muted-foreground">Uploaded: {uploadedImage.name}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="notes">Additional Notes</Label>
+                    <Textarea id="notes" name="notes" placeholder="Any special instructions or requirements?" />
+                  </div>
+                  <Button type="submit">Book Now</Button>
+                </form>
+              </div>
+            )}
+          </section>
+        )}
+
+        {activeSection === 'about' && (
+          <section>
+            <h2 className="text-3xl font-bold mb-6">About Us</h2>
+            <h3 className="text-2xl font-semibold mb-4">Our Founders</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {founders.map((founder, index) => (
+                <Card key={index}>
+                  <CardHeader>
+                    <CardTitle>{founder.name}</CardTitle>
+                    <CardDescription>{founder.role}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <img src={founder.image} alt={founder.name} className="w-full h-auto mb-4 rounded-lg" />
+                    <p>{founder.bio}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <h3 className="text-2xl font-semibold mb-4">Our Clients</h3>
+            <div className="flex flex-wrap gap-4">
+              {clients.map((client, index) => (
+                <Button key={index} variant="outline">{client}</Button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {activeSection === 'contact' && (
+          <section>
+            <h2 className="text-3xl font-bold mb-6">Contact Us</h2>
+            <div className="flex flex-col md:flex-row gap-4">
+              <Button className="flex items-center gap-2" onClick={() => window.location.href = 'tel:+1234567890'}>
+                <Phone className="h-4 w-4" />
+                Call Us
+              </Button>
+              <Button className="flex items-center gap-2" onClick={() => window.location.href = 'mailto:info@slideclean.com'}>
+                <Mail className="h-4 w-4" />
+                Email Us
+              </Button>
+              <Button className="flex items-center gap-2" onClick={() => window.open('https://wa.me/1234567890', '_blank')}>
+                <MessageCircle className="h-4 w-4" />
+                WhatsApp
+              </Button>
+            </div>
+          </section>
+        )}
+      </main>
+
+      <footer className="bg-muted mt-12 py-8">
+        <div className="container mx-auto text-center px-4">
+          <p className="text-muted-foreground">&copy; 2023 SlideClean. All rights reserved.</p>
+          <div className="mt-4 flex justify-center space-x-4">
+            <Button variant="link" className="text-primary hover:underline">Privacy Policy</Button>
+            <Button variant="link" className="text-primary hover:underline">Terms of Service</Button>
+          </div>
+        </div>
+      </footer>
+
+      {showConfirmation && (
+        <Toast
+          title="Booking Confirmed"
+          description="Your service has been booked successfully. We'll contact you soon with further details."
+          onClose={() => setShowConfirmation(false)}
+        />
+      )}
+    </div>
+  )
+}
